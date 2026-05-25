@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', sans-serif;}
+        html, body {
+            height:100%;
+            scroll-snap-type: y mandatory;
+
+            scroll-behavior: smooth;
+
+        }
+
+
+
+        :root {
+
+            --active-color: #1e272e;
+
+        }
+
+
+
+        .nav-index {
+
+            position: fixed;
+
+            top: 0; left: 0; width: 100%;
+
+            background: rgba(255, 255, 255, 0.95);
+
+            display: flex; justify-content: center;
+
+            gap: 20px; padding: 15px;
+
+            z-index: 1000;
+
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        }
+
+
+
+        .nav-index a {
+
+            text-decoration: none; color: #333; font-weight: bold;
+
+            padding: 5px 10px;
+
+            transition: all 0.3s ease;
+
+            border-bottom: 3px solid transparent;
+
+            font-size: 0.9rem;
+
+        }
+
+
+
+        .nav-index a.active {
+
+            color: var(--active-color);
+
+            border-bottom: 3px solid var(--active-color);
+
+        }
+
+
+
+        .section {
+
+            height: 100vh;
+
+            width: 100%;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            scroll-snap-align: start;
+
+            padding: 80px 10% 20px 10%;
+
+        }
+
+
+
+        .container {
+
+            display: flex;
+
+            width: 100%;
+
+            max-width: 1200px;
+
+            align-items: center;
+
+            gap: 50px;
+
+        }
+
+
+
+        .content-text {
+
+            flex: 1;
+
+        }
+
+
+
+        .content-text h2 {
+
+            font-size: 2.5rem;
+
+            margin-bottom: 20px;
+
+            color: #222;
+
+        }
+
+
+
+        .content-text p {
+
+            font-size: 1.1rem;
+
+            line-height: 1.6;
+
+            color: #555;
+
+            word-break: keep-all;
+
+        }
+
+
+
+        .content-image {
+
+            flex: 1;
+
+            display: flex;
+
+            justify-content: center;
+
+        }
+
+
+
+        .content-image div {
+
+    width: 100%;
+
+    height: 400px;
+
+    background-color: #f8f9fa;
+
+    border-radius: 15px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+   
+
+    background-size: contain;
+
+    background-repeat: no-repeat;
+
+    background-position: center;
+
+   
+
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+
+        }
+
+
+
+        .bg-1 { background-color: #f8f9fa;}
+
+        .bg-2 { background-color: #e9ecef;}
+
+        .bg-3 { background-color: #dee2e6;}
+
+        .bg-4 { background-color: #ced4da;}
+
+        .bg-5 { background-color: #adb5bd;}
+
+        .bg-6 { background-color: #ffffff;}
+
+
+
+        @media (max-width: 768px) {
+
+            .container { flex-direction: column; text-align: center; gap: 20px;}
+
+            .content-text h2 { font-size: 1.8rem; }
+
+            .content-image div { height: 250px; }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <nav class="nav-index">
+
+        <a href="#about1" class="menu item active" data-color="#ff4757">기존 문제점</a>
+
+        <a href="#about2" class="menu item" data-color="#2ed573">설문조사 결과</a>
+
+        <a href="#about3" class="menu item" data-color="#1e90ff">정책 동향</a>
+
+        <a href="#about4" class="menu item" data-color="#9b59b6">다회용기 사용의 단점 및 만회안</a>
+
+        <a href="#about5" class="menu item" data-color="#1e272e">출처</a>
+
+    </nav>
+
+
+
+    <div id="about1" class="section bg-1">
+
+        <div class="container">
+
+            <div class="content-text">
+
+                <h2>기존 문제점</h2>
+
+                <p>
+
+                    <ul>
+
+                        <li>재활용의 번거로움 - 떡볶이나, 짬뽕, 마라탕 같은 빨간 국물과 양념은 플라스틱 용기에 쉽게 착색될 수 있습니다. 또한 기름류는 일반 세제만으로 완벽히 제거하기 어렵습니다.</li>
+
+                        <li>막대한 쓰레기 발생 - 매년 소비되는 수십억개의 플라스틱 용기에 의해 환경 오염에 영향을 미칠 수 있습니다.</li>
+
+                        <li>인체적 위협 - 일회용기에서는 다회용기보다 최대 4.5배 많은 미세 플라스틱이 검출되며, 이로 인해 미세 플라스틱 입자가 혈관과 뇌까지 침투하여, 장내 염증 유발 및 신부점 위험을 높일 수 있습니다.</li>
+
+                    </ul>
+
+                </p>
+
+            </div>
+
+            <div class="content-image">
+
+                <div style="background-image: url(./IMG/about1.jpg);"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="about2" class="section bg-2">
+
+        <div class="container">
+
+            <div class="content-image">
+
+                <div style="background-image: url(./IMG/about2.jpg);"></div>
+
+            </div>
+
+            <div class="content-text">
+
+                <h2>설문조사 결과</h2>
+
+                <p>
+
+                    <ul>
+
+                        <li>설문조사 결과, 경기도민 1인당 하루 평균 일회용기 2.13개를 사용하지만, 다회용기로 음식을 주문할 의향으로는 80%에 가까운 높은 수치가 나왔습니다.</li>
+
+                    </ul>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="about3" class="section bg-3">
+
+        <div class="container">
+
+            <div class="content-text">
+
+                <h2>정책 동향</h2>
+
+                <p>
+
+                    <ul>
+
+                        <li>사업 개요 : '2040 플라스틱 제로 제주' (2025년 8월부터 시범 운영중)</li>
+
+                        <li>이용 방법 : '배달의 민족', '먹깨비' 앱에서 '다회용기 주문' 옵션을 선택합니다.</li>
+
+                        <li>사업 취지 : 배달 음식을 '다회용기 옵션'으로 주문, QR로 간편하게 반납하는 시스템을 구축하여, 제주를 '친환경 배달 문화의 글로벌 모델'로 만들겠다는 계획.</li>
+
+                    </ul>
+
+                </p>
+
+            </div>
+
+            <div class="content-image">
+
+                <img src="../hp/IMG/about3.jpg" alt="다회용기 활성화 정책_제주도 width = 200px height = 100px">
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div id="about4" class="section bg-4">
+
+        <div class="container">
+
+            <div class="content-image">
+
+                <div style="background-image: url('./IMG/about4.jpg');"></div>
+
+            </div>
+
+            <div class="content-text">
+
+                <h2>다회용기 사용의 단점 및 만회안</h2>
+
+                <p>
+
+                    <ul>
+
+                        <li>다회용기 사용의 단점으로는 직접 반납 조치가 필요하고, 다른 사람이 이미 사용했던 용기를 '재사용' 한다는 점에서 심리적으로 거부감이 들 수 있습니다. 또한 소비자나 가맹점이 수거나 세척을 함으로써 추가 비용이 발생할 수 있습니다.</li>
+
+                        <li>[만회안1] 직접 반납 조치 -> '리턴잇' 등의 전문 가방에 넣어 문 앞에 두면 수거해가는 시스템이 시행 중에 있습니다.</li>
+
+                        <li>[만회안2] 심리적 '거부감' -> 세척 과정을 QR코드나 앱 내 동영상들로 투명하게 공개합니다. / 세척이 완료된 다회용기를 밀봉 가방이나 박스에 밀폐해둔 후, 배달 전까지 아무도 열어보지 못하도록, '안심 봉인 스티커'를 부착해 배달합니다.</li>
+
+                        <li>[만회안3] 수거/세척으로 인한 '추가 비용' 발생 -> 서울시, 경기도 등 여러 지자체에서 수거/세척으로 인한 추가비용에 대한 부담이 덜하도록 '다회용기 수거/세척 지원금을 지급합니다.</li>
+
+                    </ul>
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div id="about5" class="section bg-6">
+        <div class="container">
+            <div class="content-text">
+                <h2>출처</h2>
+                <p>
+                    중앙일보, youtube - SBS뉴스, 연합뉴스TV, 한국경제 등
+                </p>
+            </div>
+            <div class="content-image">
+                <div style="background-color: #f1f3f5; display: flex; align-items: center; justify-content: center;">
+                    References
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const menuItems = document.querySelectorAll('.nav-index a');
+const sections = document.querySelectorAll('.section');
+menuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        const targetColor = item.getAttribute('data-color');
+        document.documentElement.style.setProperty('--active-color', targetColor);
+    });
+});
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.6
+};
+const observerCallback = (entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            const navItem = document.querySelector(`.nav-index a[href="#${id}"]`);
+            menuItems.forEach(item => item.classList.remove('active'));
+            navItem.classList.add('active');
+            const targetColor = navItem.getAttribute('data-color');
+            document.documentElement.style.setProperty('--active-color', targetColor);
+        }
+    });
+};
+const observer = new IntersectionObserver(observerCallback, observerOptions);
+sections.forEach(section => observer.observe(section));
+    </script>
+</body>
+</html>

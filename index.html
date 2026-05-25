@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Green-Map</title>
+    <style>
+        body {
+            background-color: #333333;
+            margin: 0;
+            color: white;
+            overflow: hidden; /* 전체 페이지 스크롤 방지 */
+        }
+        ul.nav-menu {
+            list-style: none;
+            border-top: 1px solid goldenrod;
+            border-bottom: 1px solid goldenrod;
+            padding: 10px 0;
+            text-align: center;
+            white-space: nowrap;
+            margin: 0;
+            position: relative;
+            z-index: 10;
+            background-color: #333333;
+        }
+        ul.nav-menu li {
+            display: inline-block;
+            text-transform: uppercase;
+            padding: 0 10px;
+            letter-spacing: 5px;
+        }
+        ul.nav-menu li a {
+            text-decoration: none;
+            color: white;
+            display: inline-block;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, color 0.3s ease;
+            cursor: pointer; 
+        }
+        ul.nav-menu li a:hover {
+            transform: scale(1.2);
+            color: goldenrod;
+        }
+
+        .top-info-bar {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; 
+            align-items: center;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            height: 55px;
+            position: relative;
+            z-index: 10; 
+        }
+
+        #clock {
+            font-weight: bold;
+            font-size: 24px;
+            white-space: nowrap;
+            justify-self: start; 
+        }
+
+        .tier-container {
+            display: flex;
+            align-items: center;
+            background-color: #222222;
+            border: 1px solid goldenrod;
+            border-radius: 20px; 
+            height: 34px; 
+            width: 50vw; 
+            max-width: 650px;
+            position: relative; 
+            grid-column: 2; 
+        }
+
+        .tier-inner {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .tier-segment {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+            position: relative; 
+            border-right: 1px solid rgba(218, 165, 32, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tier-segment:last-child {
+            border-right: none;
+        }
+
+        .tier-name {
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px; 
+            transition: color 0.3s ease;
+        }
+
+        .tier-count {
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 7.5px;
+            font-weight: normal;
+            color: rgba(255, 215, 0, 0.6); 
+            transition: color 0.3s ease;
+        }
+
+        .tier-iron { background-color: rgba(128, 128, 128, 0.25); }       
+        .tier-bronze { background-color: rgba(184, 115, 51, 0.25); }     
+        .tier-silver { background-color: rgba(192, 192, 192, 0.25); }     
+        .tier-gold { background-color: rgba(218, 165, 32, 0.25); }       
+        .tier-platinum { background-color: rgba(173, 216, 230, 0.25); }   
+        .tier-diamond { background-color: rgba(30, 144, 255, 0.25); }     
+        .tier-goat { background-color: rgba(0, 0, 0, 0.6); }              
+
+        .tier-segment:hover .tier-name { color: #ffffff; text-shadow: 0 0 5px #ffffff; }
+        .tier-segment:hover .tier-count { color: #ffeb99; }
+
+        .tier-iron:hover { background-color: rgba(128, 128, 128, 0.8); box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.4); }       
+        .tier-bronze:hover { background-color: rgba(184, 115, 51, 0.8); box-shadow: inset 0 0 15px rgba(244, 164, 96, 0.5); }     
+        .tier-silver:hover { background-color: rgba(192, 192, 192, 0.8); box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.5); }     
+        .tier-gold:hover { background-color: rgba(218, 165, 32, 0.8); box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.6); }       
+        .tier-platinum:hover { background-color: rgba(173, 216, 230, 0.8); box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.6); }   
+        .tier-platinum:hover .tier-name { color: #000; text-shadow: none; }
+        .tier-platinum:hover .tier-count { color: #222; }
+        .tier-diamond:hover { background-color: rgba(30, 144, 255, 0.8); box-shadow: inset 0 0 15px rgba(0, 191, 255, 0.7); }     
+        .tier-goat:hover { background-color: rgba(15, 15, 15, 1); box-shadow: inset 0 0 15px rgba(218, 165, 32, 0.5); }              
+
+        .tier-pointer {
+            position: absolute;
+            top: -3px;            
+            left: 0%;            
+            width: 4px;          
+            height: 40px;         
+            background-color: #ffffff;
+            box-shadow: 0 0 8px #ffffff, 0 0 15px #ffd700; 
+            z-index: 5;          
+            transform: translateX(-50%); 
+            border-radius: 2px;
+            transition: left 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+            pointer-events: none; 
+        }
+
+        /* =========================================================
+           ✨ 삼분할 레이아웃 배치 수정
+        ========================================================= */
+
+        /* 1. [왼쪽] Eco Benefits 사이드바 */
+        .ad-sidebar {
+            width: 290px;
+            height: calc(100vh - 150px); 
+            background-color: #222222;
+            border: 2px solid goldenrod;
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            color: white;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.2);
+            overflow-y: auto;
+            
+            float: left;
+            margin: 10px 0 0 20px; /* 왼쪽 첫 번째 여백 */
+            z-index: 10;            
+        }
+        .ad-sidebar h3 {
+            color: goldenrod;
+            text-align: center;
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+        .ad-content {
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .ad-benefit {
+            background-color: #2d2d2d;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 12px;
+            border-left: 4px solid goldenrod;
+        }
+        .ad-benefit strong {
+            color: #ffeb99;
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .ad-sub-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 5px 0 0 0;
+        }
+        .ad-sub-list li {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #444;
+            color: #ddd;
+            font-size: 12px;
+        }
+        .ad-sub-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .ad-sub-title {
+            font-weight: bold;
+            color: #90EE90;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        /* 2. [중앙] 메인 iframe 슬라이더 영역 (Eco Benefits 우측 배치) */
+        .main-wrapper {
+            /* 100%에서 (에코 290px + 커뮤니티 320px + 여백들 총 80px)을 제외한 유동값 */
+            width: calc(100% - 690px); 
+            height: calc(100vh - 150px);
+            overflow: hidden; 
+            position: relative;
+            margin-top: 10px;
+            margin-left: 20px; /* 에코 사이드바와의 간격 */
+            z-index: 5;
+            float: left;
+        }
+
+        .slide-container {
+            display: flex;
+            width: 400%; 
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1); 
+        }
+
+        .slide-page {
+            width: 25%;
+            height: 100%;
+        }
+        .slide-container .slide-page:nth-child(4) {
+            background-color: #ffffff;
+        }
+        .slide-page iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* 3. [오른쪽] Community 사이드바 (메인 화면 우측 배치) */
+        .community-sidebar {
+            width: 320px;
+            height: calc(100vh - 150px);
+            background-color: #222222;
+            border: 2px solid goldenrod;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            color: white;
+            box-shadow: 0 0 15px rgba(218, 165, 32, 0.2);
+            display: flex;
+            flex-direction: column;
+
+            float: left;
+            margin: 10px 20px 0 20px; /* 메인 영역과의 간격 및 오른쪽 끝단 여백 */
+            z-index: 10;
+            position: relative;
+        }
+        .community-sidebar h3 {
+            color: goldenrod;
+            text-align: center;
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            font-size: 18px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .board-list {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding-right: 3px;
+        }
+        .board-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .board-list::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 2px;
+        }
+        .board-item {
+            background-color: #2d2d2d;
+            border-left: 3px solid goldenrod;
+            padding: 8px 10px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        .board-item-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #aaa;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+        .board-author {
+            color: #90EE90;
+            font-weight: bold;
+        }
+        .board-text {
+            color: #eee;
+            line-height: 1.4;
+            white-space: pre-wrap;
+        }
+        .board-del {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 10px;
+            padding: 0;
+        }
+        .board-empty {
+            text-align: center;
+            color: #666;
+            margin-top: 40px;
+            font-size: 12px;
+        }
+
+        .board-form {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .board-form input {
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        .board-form textarea {
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            color: white;
+            padding: 5px;
+            border-radius: 3px;
+            font-size: 12px;
+            height: 45px;
+            resize: none;
+        }
+        .board-form button {
+            background-color: goldenrod;
+            color: #222;
+            border: none;
+            padding: 5px;
+            font-weight: bold;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .board-form button:hover {
+            background-color: #ffdf65;
+        }
+
+        /* =========================================================
+            🛠️ 100% 빈 공간 클릭 감지 레이어
+        ========================================================= */
+        .global-click-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: transparent; 
+            pointer-events: auto;     
+            z-index: 1;               
+        }
+
+        .swirl-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999; 
+            transform: translate(-50%, -50%);
+            opacity: 1;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease-out;
+        }
+
+        .gold-dust {
+            position: absolute;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            pointer-events: none;
+            z-index: 100000;
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            animation: goldBurst 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes goldBurst {
+            0% {
+                transform: translate(-50%, -50%) translate(0, 0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) translate(var(--tx), calc(var(--ty) + 15px)) rotate(var(--rot)) scale(0.3);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="global-click-overlay" id="bgOverlay"></div>
+
+    <ul class="nav-menu">
+        <li><a onclick="moveToPage(0)">home</a></li>
+        <li><a onclick="moveToPage(1)">about</a></li>
+        <li><a onclick="moveToPage(2)">map</a></li> 
+        <li><a onclick="moveToPage(3)">homework</a></li>
+    </ul>
+
+    <div class="top-info-bar">
+        <div id="clock">00:00:00</div>
+        
+        <div class="tier-container">
+            <div class="tier-inner">
+                <div class="tier-segment tier-iron"><span class="tier-name">Iron</span><span class="tier-count">0+</span></div>
+                <div class="tier-segment tier-bronze"><span class="tier-name">Bronze</span><span class="tier-count">10+</span></div>
+                <div class="tier-segment tier-silver"><span class="tier-name">Silver</span><span class="tier-count">30+</span></div>
+                <div class="tier-segment tier-gold"><span class="tier-name">Gold</span><span class="tier-count">50+</span></div>
+                <div class="tier-segment tier-platinum"><span class="tier-name">Platinum</span><span class="tier-count">100+</span></div>
+                <div class="tier-segment tier-diamond"><span class="tier-name">Diamond</span><span class="tier-count">200+</span></div>
+                <div class="tier-segment tier-goat"><span class="tier-name">GOAT</span><span class="tier-count">500+</span></div>
+            </div>
+            <div class="tier-pointer" id="myTierPointer"></div>
+        </div>
+        <div></div>
+    </div>
+
+    <!-- 1. [왼쪽] Eco Benefits 사이드바 -->
+    <div class="ad-sidebar">
+        <h3>Eco Benefits 🌍</h3>
+        <div class="ad-content">
+            <p style="text-align: center; color: #aaa; font-size:12px; margin-bottom: 15px; margin-top: 0;">다회용기 사용 혜택</p>
+            <div class="ad-benefit"><strong>1. 쏠쏠한 현금 할인</strong>카페나 프랜차이즈에서 개인 다회용기 지참 시 즉시 300~500원 절감됩니다.</div>
+            <div class="ad-benefit"><strong>2. 탄소중립포인트</strong>정부에서 다회용기 사용 횟수를 정산해 계좌로 현금을 입금해 주는 제도입니다.</div>
+            <div class="ad-benefit">
+                <strong>3. 신체적 건강 예방</strong>
+                <ul class="ad-sub-list">
+                    <li><span class="ad-sub-title">🍭 제 2형 당뇨병 및 비만</span>일회용기를 멀리하면 대사 과정이 정상화되어 발병률을 낮춥니다.</li>
+                    <li><span class="ad-sub-title">🫀 심혈관 질환 위험 감소</span>미세 플라스틱 축적으로 인한 심장마비 위험을 차단합니다.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. [중앙] 메인 화면 슬라이더 영역 -->
+    <div class="main-wrapper" id="mainWrapper">
+        <div class="slide-container" id="slideContainer">
+            <div class="slide-page"><iframe id="iframe0" src="index1.html"></iframe></div>
+            <div class="slide-page"><iframe id="iframe1" src="about.html"></iframe></div>
+            <div class="slide-page"><iframe id="iframe2" src="map.html"></iframe></div>
+            <div class="slide-page"><iframe id="iframe3" src="hw.html"></iframe></div>
+        </div>
+    </div>
+
+    <!-- 3. [오른쪽] 커뮤니티 채팅창 사이드바 -->
+    <div class="community-sidebar">
+        <h3>Community 💬</h3>
+        <div class="board-list" id="mainBoardList"></div>
+        <div class="board-form">
+            <input type="text" id="boardNick" placeholder="닉네임" maxlength="10">
+            <textarea id="boardMsg" placeholder="자유롭게 이야기를 나누어 보세요! (최대 100자)" maxlength="100"></textarea>
+            <button onclick="submitMessage()">등록</button>
+        </div>
+    </div>
+
+    <script>
+        let currentIdx = 0;
+        function moveToPage(pageIndex) {
+            currentIdx = pageIndex;
+            const container = document.getElementById('slideContainer');
+            container.style.transform = `translateX(-${pageIndex * 25}%)`;
+        }
+
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+        }
+        updateClock(); setInterval(updateClock, 1000);
+
+        function setMyPosition(percent) {
+            document.getElementById('myTierPointer').style.left = `${Math.max(0, Math.min(100, percent))}%`;
+        }
+        setMyPosition(65); 
+
+        // 게시판 로직
+        window.addEventListener('DOMContentLoaded', () => { renderMessages(); });
+        function submitMessage() {
+            const nickInput = document.getElementById('boardNick'); const msgInput = document.getElementById('boardMsg');
+            const nickname = nickInput.value.trim(); const message = msgInput.value.trim();
+            if(!nickname || !message) return;
+            const now = new Date(); const dateStr = `${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            let currentLogs = JSON.parse(localStorage.getItem('side_board_logs')) || [];
+            currentLogs.unshift({ id: Date.now(), author: nickname, text: message, time: dateStr });
+            localStorage.setItem('side_board_logs', JSON.stringify(currentLogs));
+            nickInput.value = ''; msgInput.value = ''; renderMessages();
+        }
+        function renderMessages() {
+            const listWrap = document.getElementById('mainBoardList'); const currentLogs = JSON.parse(localStorage.getItem('side_board_logs')) || [];
+            if(currentLogs.length === 0) { listWrap.innerHTML = '<div class="board-empty">작성된 글이 없습니다.</div>'; return; }
+            let html = '';
+            currentLogs.forEach(item => {
+                html += `<div class="board-item"><div class="board-item-meta"><div><span class="board-author">${cleanText(item.author)}</span>•<span>${item.time}</span></div><button class="board-del" onclick="removeMessage(${item.id})">삭제</button></div><div class="board-text">${cleanText(item.text)}</div></div>`;
+            });
+            listWrap.innerHTML = html;
+        }
+        function removeMessage(id) { if(confirm('삭제하시겠습니까?')) { let logs = JSON.parse(localStorage.getItem('side_board_logs'))||[]; logs = logs.filter(i=>i.id!==id); localStorage.setItem('side_board_logs',JSON.stringify(logs)); renderMessages(); } }
+        function cleanText(raw) { return raw.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+        // 파티클 생성 핵심 로직
+        function triggerClickEffect(mouseX, mouseY) {
+            const blackCount = 14;
+            const blackColors = ['#000000', '#1a1a1a', '#333333', '#555555'];
+            for (let i = 0; i < blackCount; i++) {
+                const blackPart = document.createElement('div');
+                blackPart.className = 'swirl-particle';
+                blackPart.style.background = blackColors[Math.floor(Math.random() * blackColors.length)];
+                const size = Math.random() * 2 + 2; 
+                blackPart.style.width = size + 'px';
+                blackPart.style.height = size + 'px';
+                blackPart.style.left = mouseX + 'px';
+                blackPart.style.top = mouseY + 'px';
+                document.body.appendChild(blackPart);
+
+                const startAngle = (i / blackCount) * Math.PI * 2; 
+                const targetRadius = Math.random() * 35 + 35; 
+                const swirlRotation = 540; 
+                const endAngle = startAngle + (swirlRotation * Math.PI / 180);
+                const targetX = Math.cos(endAngle) * targetRadius;
+                const targetY = Math.sin(endAngle) * targetRadius;
+
+                requestAnimationFrame(() => {
+                    blackPart.style.transform = `translate(-50%, -50%) translate(${targetX}px, ${targetY}px) rotate(${swirlRotation}deg)`;
+                    blackPart.style.opacity = '0'; 
+                });
+                setTimeout(() => { blackPart.remove(); }, 800);
+            }
+
+            const rainbowCount = 15;
+            const rainbowColors = ['#ff2a2a', '#ff7a2a', '#ffea2a', '#2aff4b', '#2affdb', '#2a76ff', '#b62aff', '#ff2a9d'];
+            for (let j = 0; j < rainbowCount; j++) {
+                const colorPart = document.createElement('div');
+                colorPart.className = 'gold-dust'; 
+                const randomColor = rainbowColors[Math.floor(Math.random() * rainbowColors.length)];
+                colorPart.style.background = randomColor;
+                colorPart.style.boxShadow = `0 0 3px ${randomColor}, 0 0 6px ${randomColor}`;
+                const partSize = Math.random() * 1.5 + 1.5; 
+                colorPart.style.width = partSize + 'px';
+                colorPart.style.height = partSize + 'px';
+                colorPart.style.left = mouseX + 'px';
+                colorPart.style.top = mouseY + 'px';
+
+                const goldAngle = Math.random() * Math.PI * 2;
+                const goldDistance = Math.random() * 70 + 25; 
+                const goldX = Math.cos(goldAngle) * goldDistance;
+                const goldY = Math.sin(goldAngle) * goldDistance;
+                const goldRot = Math.random() * 360; 
+
+                colorPart.style.setProperty('--tx', goldX + 'px');
+                colorPart.style.setProperty('--ty', goldY + 'px');
+                colorPart.style.setProperty('--rot', goldRot + 'deg');
+                document.body.appendChild(colorPart);
+                setTimeout(() => { colorPart.remove(); }, 500);
+            }
+        }
+
+        window.addEventListener('click', function(e) {
+            if(e.target.tagName === 'IFRAME') return;
+            triggerClickEffect(e.pageX, e.pageY);
+        });
+
+        window.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'iframe_click') {
+                const iframeTarget = document.getElementById('iframe' + currentIdx);
+                if (!iframeTarget) return;
+                const rect = iframeTarget.getBoundingClientRect();
+                const parentX = rect.left + window.scrollX + e.data.x;
+                const parentY = rect.top + window.scrollY + e.data.y;
+                triggerClickEffect(parentX, parentY);
+            }
+        });
+    </script>
+</body>
+</html>

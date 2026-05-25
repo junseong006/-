@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        iframe {
+            width: 100%;
+            /* 💡 시계 높이(약 45px)만큼을 더 빼주어야 화면에 딱 맞고 스크롤바가 안 생깁니다 */
+            height: calc(100vh - 105px); 
+            border: none;
+            display: block;
+        }
+        body {
+            background-color: #333333;
+            margin: 0;
+        }
+        ul {
+            list-style: none;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
+            padding: 10px 0;
+            text-align: center;
+            white-space: nowrap;
+            margin: 0; /* 💡 메뉴 위아래 기본 여백을 없애 시계를 더 밀착시킵니다 */
+        }
+        ul li {
+            display: inline-block;
+            text-transform: uppercase;
+            padding: 0 10px;
+            letter-spacing: 5px;
+        }
+        ul li a {
+            text-decoration: none;
+            color: black;
+            display: inline-block;
+            text-transform: uppercase;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        ul li a:hover {
+        transform: scale(1.2);
+        }
+        ul li:nth-child(1) a:hover { color: darkblue; }
+        ul li:nth-child(2) a:hover { color: brown; }
+        ul li:nth-child(3) a:hover { color: skyblue;}
+        ul li:nth-child(4) a:hover { color: grey; }
+    </style>
+</head>
+<body>
+</body>
+</html>
