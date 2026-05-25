@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 - Green-Map</title>
+    <style>
+        body { background-color: #333; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-container { width: 400px; padding: 30px; background: #222; border: 2px solid goldenrod; border-radius: 15px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; box-sizing: border-box; background: #1a1a1a; border: 1px solid #444; color: white; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: goldenrod; border: none; cursor: pointer; color: #222; font-weight: bold; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>LOGIN</h2>
+        <form id="loginForm">
+            <input type="text" id="loginId" placeholder="아이디" required>
+            <input type="password" id="loginPw" placeholder="비밀번호" required>
+            <button type="submit">로그인</button>
+        </form>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (document.getElementById('loginId').value === localStorage.getItem('savedId') && 
+                document.getElementById('loginPw').value === localStorage.getItem('savedPw')) {
+                sessionStorage.setItem('showWelcome', document.getElementById('loginId').value);
+                window.location.href = 'index.html';
+            } else { alert('아이디 또는 비밀번호가 틀렸습니다.'); }
+        });
+    </script>
+</body>
+</html>
